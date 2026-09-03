@@ -19,7 +19,8 @@ SOURCES = \
 
 OBJECTS = $(patsubst $(SRC_DIR)/%.F90,$(BUILD_DIR)/%.o,$(SOURCES))
 
-.PHONY: all clean run
+#.PHONY: all clean run
+.PHONY: all clean run test
 
 all: $(EXE)
 
@@ -35,8 +36,18 @@ $(EXE): $(OBJECTS)
 run: $(EXE)
 	./$(EXE)
 
-clean:
-	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/*.mod $(EXE)
+# Compile TEST_DRIVER.F90
+$(BUILD_DIR)/TEST_DRIVER.o: $(SRC_DIR)/TEST_DRIVER.F90 $(BUILD_DIR)/HYBRID15_CLR.o | $(BUILD_DIR)
+	$(FC) $(FFLAGS) -module $(BUILD_DIR) -I$(BUILD_DIR) -c $< -o $@
+# Build and run the test driver using all objects plus TEST_DRIVER.o
+test: $(OBJECTS) $(BUILD_DIR)/TEST_DRIVER.o
+	$(FC) $(FFLAGS) $(OBJECTS) $(BUILD_DIR)/TEST_DRIVER.o -o $(BUILD_DIR)/test_driver.exe
+	./$(BUILD_DIR)/test_driver.exe
 
+#clean:
+#	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/*.mod $(EXE)
+
+clean:
+	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/*.mod $(EXE) $(BUILD_DIR)/test_driver.exe
 
 

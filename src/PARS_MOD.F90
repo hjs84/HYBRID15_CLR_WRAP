@@ -2,6 +2,30 @@ module PARS_MOD
 !----------------------------------------------------------------------!
 implicit none
 !----------------------------------------------------------------------!
+! From driver.txt
+!real :: syr = 2023   ! syr
+!real :: eyr = 2024   ! eyr
+!real :: nyr_co2 = 2025   ! nyr_co2
+!real :: dz (1) = 250.0  ! dz (1) (mm)
+!real :: dz (2) = 750.0  ! dz (2) (mm)
+!real :: theta (1) = 0.60   ! theta (1) (m3/m3)
+!real :: theta (2) = 0.25   ! theta (2) (m3/m3)
+!real :: snowpack = 0.0    ! snowpack (mm)
+!real :: Wcan = 0.0    ! Wcan (mm)
+!real :: LAI = 4.0    ! LAI
+!real :: height = 0.3    ! height (m)
+!real :: biomass = 200.0  ! biomass (g[DM]/m2)
+!real :: froot_top = 0.8    ! froot_top (fraction)
+!real :: pool_initial (1) = 80.0   ! pool_initial (1); g[C] m-2
+!real :: pool_initial (2) = 150.0  ! pool_initial (2); g[C] m-2
+!real :: pool_initial (3) = 255.0  ! pool_initial (3); g[C] m-2
+!real :: pool_initial (4) = 30.0   ! pool_initial (4); g[C] m-2
+!real :: pool_initial (5) = 20.0   ! pool_initial (5); g[C] m-2
+!real :: pool_initial (6) = 40.0   ! pool_initial (6); g[C] m-2
+!real :: pool_initial (7) = 4420.0 ! pool_initial (7); g[C] m-2
+!real :: pool_initial (8) = 3825.0 ! pool_initial (8); g[C] m-2
+!real :: fiSOM = 5.0    ! fiSOM (factor)
+!----------------------------------------------------------------------!
 integer, parameter :: ndays   =   365
 integer, parameter :: nt      =    48
 integer, parameter :: nland   = 67420
@@ -42,8 +66,10 @@ real, parameter :: DDF_R    = ( 0.1 + 20.0) / 2.0
 real, parameter :: DDF_INC  = ( 0.1 +  5.0) / 2.0
 real, parameter :: TM       = (-3.0 +  3.0) / 2.0
 real, parameter :: b_RC     = (0.1 + 20.0) / 2.0
-real, parameter :: b_perc   = (0.1 + 5.0) / 2.0
-real, parameter :: perc_max = (0.0 + 10.0) / 2.0
+!real, parameter :: b_perc   = (0.1 + 5.0) / 2.0
+!real, parameter :: perc_max = (0.0 + 10.0) / 2.0
+real :: b_perc   = (0.1 + 5.0) / 2.0
+real :: perc_max = (0.0 + 10.0) / 2.0
 real, parameter :: hksat    = 25.0 / (60.0 * 60.0)
 !----------------------------------------------------------------------!
 ! Mean canopy boundary layer resistance, taken from p. 845 of      (s/m)
@@ -97,25 +123,33 @@ real, parameter :: zp0 = 0.01
 !----------------------------------------------------------------------!
 real, parameter :: pcan = 0.1
 !----------------------------------------------------------------------!
-real, parameter :: Topt_J    = 31.0
-real, parameter :: omega_J   = 18.0
+!real, parameter :: Topt_J    = 31.0
+!real, parameter :: omega_J   = 18.0
+real :: Topt_J    = 31.0
+real :: omega_J   = 18.0
 real, parameter :: swp_max   = -1.1e-3 ! rawls et al., 92, loam REF
 real, parameter :: bsoil     = 4.5     ! rawls et al., 92, loam REF
 real, parameter :: a_Ksoil   = 2.0 + 3.0 / bsoil !
-real, parameter :: Vcmax_top = 30.0e-6
-real, parameter :: Jmax_top  = 2.1 * Vcmax_top
+!real, parameter :: Vcmax_top = 30.0e-6
+real :: Vcmax_top = 30.0e-6
+!real, parameter :: Jmax_top  = 2.1 * Vcmax_top
+real :: Jmax_top  = 63.0e-6
 real, parameter :: Ksoil_sat = 10**4 ! dewar21 (mol m-2 s-1 MPa-1)
-real, parameter :: Kx        = 0.01 !0.01 dewar21; ! 3.0e-5 optimised
+!real, parameter :: Kx        = 0.01 !0.01 dewar21; ! 3.0e-5 optimised
+real :: Kx        = 0.01
 real, parameter :: Oi        = 210.0e-3 ! mol mol-1
-real, parameter :: lwp_crit  = -2.0 ! dewar18
+!real, parameter :: lwp_crit  = -2.0 ! dewar18
+real :: lwp_crit  = -2.0
 real, parameter :: gmin      = 5.0e-3
 real, parameter :: gmax      = 0.180
 real, parameter :: KPh       = exp (0.00963 * (0.02 / 0.001) - 2.43)
-real, parameter :: KPAR      = 0.65
+!real, parameter :: KPAR      = 0.65
+real :: KPAR      = 0.65
 real, parameter :: Mw        = 18.015 ! g mol-1
 real, parameter :: Ma        = 28.97  ! g mol-1
 real, parameter :: MC        = 12.011 ! g[C] mol[C]-1
-real, parameter :: asw       = 0.12   ! https://doi.org/10.1029/2020JD033582
+!real, parameter :: asw       = 0.12   ! https://doi.org/10.1029/2020JD033582
+real :: asw       = 0.12   ! https://doi.org/10.1029/2020JD033582
 real, parameter :: emm       = 0.99   ! Google AI
 real, parameter :: sb        = 5.67e-8 ! W m-2 K-4
 real, parameter :: cp        = 1012.0! J kg-1 K-1
@@ -129,17 +163,22 @@ real, parameter :: tau_biomass = 0.5 * 60.0 * 60.0 * 24.0 * 365.0
 !----------------------------------------------------------------------!
 real, parameter :: tau_SOM = 2.0 * 60.0 * 60.0 * 24.0 * 365.0
 !----------------------------------------------------------------------!
-real, parameter :: q10     = 2.0  ! from Manas namelist
-real, parameter :: T_ref   = 25.0 ! from Manas namelist
+!real, parameter :: q10     = 2.0  ! from Manas namelist
+real :: q10     = 2.0
+!real, parameter :: T_ref   = 25.0 ! from Manas namelist
+real :: T_ref   = 25.0
 ! Calibrated to obs of High Fen.
-real, parameter :: theta_sat = 0.6 ! Saturated vol. cont. (mm/mm)
+!real, parameter :: theta_sat = 0.6 ! Saturated vol. cont. (mm/mm)
+real :: theta_sat = 0.6 ! Saturated vol. cont. (mm/mm)
 real, parameter :: saturation_to_field_capacity = one / 0.7 !1.72
 real, parameter :: saturation_to_minimum = &
                    saturation_to_field_capacity * 1505.0 / 250.0
 real, parameter :: swc_field_capacity = one / &
                    saturation_to_field_capacity
-real, parameter :: wfps_threshold = 60.0
-real, parameter :: moisture_dry_width = 800.0
+!real, parameter :: wfps_threshold = 60.0
+!real, parameter :: moisture_dry_width = 800.0
+real :: wfps_threshold = 60.0
+real :: moisture_dry_width = 800.0
 !----------------------------------------------------------------------!
 ! Maximum annual SOM decay rates, yr-1, ordered by the 8 pool indices
 ! above.

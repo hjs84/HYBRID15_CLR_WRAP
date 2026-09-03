@@ -26,8 +26,9 @@ mkdir -p build results slurm_logs
 
 # Clean, compile, and run the model using the default eightpool.nml file.
 make clean FC="${FCOMP}"
-make all FC="${FCOMP}"
-make run FC="${FCOMP}"
+#make all FC="${FCOMP}"
+#make run FC="${FCOMP}"
+make test FC="${FCOMP}"
 
 echo ""
 echo "Compilation and HYBRID15_CLR model run completed successfully."

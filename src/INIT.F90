@@ -1,10 +1,12 @@
 !======================================================================!
-subroutine INIT
+subroutine INIT(params_in, n_params, n_days)
 !----------------------------------------------------------------------!
 use PARS_MOD
 use VARS_MOD
 !----------------------------------------------------------------------!
 implicit none
+integer, intent(in) :: n_params, n_days
+real(8), intent(in), dimension(n_params) :: params_in
 !----------------------------------------------------------------------!
 open (10, file = 'home_dir.txt', status = 'old')
 read (10,*) home_dir
@@ -29,6 +31,31 @@ do ip = 1, n_pools
 end do
 read (11,*) fiSOM
 close (11)
+
+wfps_threshold = params_in(1)
+T_ref          = params_in(2)
+Vcmax_top      = params_in(3)
+theta_sat      = params_in(4)
+q10            = params_in(5)
+dz(2)          = params_in(6)
+Topt_J         = params_in(7)
+moisture_dry_width = params_in(8)
+pool_initial(7,1)  = params_in(9)
+pool_initial(7,2)  = params_in(10)
+omega_J            = params_in(11)
+Kx                 = params_in(12)
+lwp_crit           = params_in(13)
+b_perc             = params_in(14)
+LAI                = params_in(15)
+pool_initial(3,1)  = params_in(16)
+pool_initial(3,2)  = params_in(17)
+asw                = params_in(18)
+perc_max           = params_in(19)
+dz(1)              = params_in(20)
+KPAR               = params_in(21)
+
+Jmax_top = 2.1 * Vcmax_top
+
 !----------------------------------------------------------------------!
 ! Assume SM_MAX is saturated water content (porosity) and all soil is
 ! peat. Using Eqn. 7.90 of oleson and theta_sat_om = 0.9. But obs
@@ -38,12 +65,14 @@ SM_MAX (:) = theta_sat * dz (:)
 SM_MIN (:) = SM_MAX / saturation_to_minimum
 !----------------------------------------------------------------------!
 sm (1) = theta (1) * dz (1)
-sm (2) = SM_MAX (2) !theta (2) * dz (2)
+sm (2) = SM_MAX (2) 
 depth_layer1 = dz (1) / 1000 ! Thickness of layer 1 (m)
 depth_layer2 = dz (2) / 1000 ! Thickness of layer 2 (m)
 n_layer1_nodes = 1 + nint(depth_layer1 / dz_soil)
 n_layer2_nodes = 1 + nint((depth_layer1 + depth_layer2) / dz_soil)
-write (*,*) depth_layer1, depth_layer2, n_layer1_nodes, n_layer2_nodes
+T_profile (:) = mean_air_temp
+T_soil_daily_mean (:) = mean_air_temp
+T_soil (:) = mean_air_temp
 !----------------------------------------------------------------------!
 ! Split SOM pools over layers in proportion to thicknesse.
 !----------------------------------------------------------------------!
@@ -74,18 +103,6 @@ allocate (spfh (nyr_sim,ntimes))
 allocate (pres (nyr_sim,ntimes))
 allocate (ugrd (nyr_sim,ntimes))
 allocate (vgrd (nyr_sim,ntimes))
-!----------------------------------------------------------------------!
-open (20, file = 'results/HYBRID15_CLR_dt_output.txt', status = 'unknown')
-write (20,'(4A6, 8A12, 15A16)') 'kyr_ce', 'kday', 'kt', 'hr', 'T_soil_1',&
-     &'T_soil_2', 'T_soilday_1', 'T_soilday_2',&
-     &'tmp_l', 'co2_ppm', 'sm_1', 'sm_2', 'gpp',&
-     &'Raut', 'aet', 'G', 'Rhet', 'npp', 'pre_l', 'sm_q', 'gpp_day',&
-     &'Raut_day', 'Rhet_day', 'biomass', 'LE', 'TC', 'perc'
-!----------------------------------------------------------------------!
-open (24, file = 'results/HYBRID15_CLR_day_output.txt', status = 'unknown')
-write (24,'(2A6, 9A12)') 'kyr_ce', 'kday', 'NEE_day', 'GPP_day',&
-     &'Raut_day', 'Rhet_day', 'PPT_day', 'LE_day', 'G_day', 'sm_day',&
-     &'snowpack'
 !----------------------------------------------------------------------!
 ! Read all CO2 and climate forcings.
 !----------------------------------------------------------------------!
