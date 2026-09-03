@@ -118,8 +118,8 @@ contains
         Rhet_day = day_s * Rhet
         NEE_day = Raut_day + Rhet_day - GPP_day
 
-        if (day_idx > n_days) exit     
         day_idx = day_idx + 1
+        if (day_idx > n_days) exit     
         nee_out (day_idx)  = real (NEE_day, 8)
         gpp_out (day_idx)  = real (GPP_day, 8)
         reco_out (day_idx) = real (Raut_day + Rhet_day, 8)
