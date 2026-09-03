@@ -8,6 +8,8 @@ implicit none
 integer, intent(in) :: n_params, n_days
 real(8), intent(in), dimension(n_params) :: params_in
 !----------------------------------------------------------------------!
+if (.not. allocated(T_soil)) allocate(T_soil(nlayers))
+
 open (10, file = 'home_dir.txt', status = 'old')
 read (10,*) home_dir
 close (10)
@@ -70,6 +72,7 @@ depth_layer1 = dz (1) / 1000 ! Thickness of layer 1 (m)
 depth_layer2 = dz (2) / 1000 ! Thickness of layer 2 (m)
 n_layer1_nodes = 1 + nint(depth_layer1 / dz_soil)
 n_layer2_nodes = 1 + nint((depth_layer1 + depth_layer2) / dz_soil)
+
 T_profile (:) = mean_air_temp
 T_soil_daily_mean (:) = mean_air_temp
 T_soil (:) = mean_air_temp
@@ -80,41 +83,25 @@ do kl = 1, nlayers
   pool_initial (:,kl) = fiSOM * pool_initial (:,1) * dz (kl) / &
                         (dz (1) + dz (2))
 end do
-!----------------------------------------------------------------------!
-allocate (T_soil (nlayers)) ! oC
-!----------------------------------------------------------------------!
-if (nyr_co2 > 2025) then
-  write (*,*) 'nyr_co2 = ', nyr_co2, 'exceeds input file limit of 2025'
-  write (*,*) 'Stopping'
-  stop
-end if
-!----------------------------------------------------------------------!
-allocate (co2_ppm (nyr_co2))
+
 !----------------------------------------------------------------------!
 ! Total number of years in simuation (yr)
 !----------------------------------------------------------------------!
 nyr_sim = eyr - syr + 1
 !----------------------------------------------------------------------!
-allocate (tmp  (nyr_sim,ntimes))
-allocate (pre  (nyr_sim,ntimes))
-allocate (tswrf(nyr_sim,ntimes))
-allocate (dlwrf(nyr_sim,ntimes))
-allocate (spfh (nyr_sim,ntimes))
-allocate (pres (nyr_sim,ntimes))
-allocate (ugrd (nyr_sim,ntimes))
-allocate (vgrd (nyr_sim,ntimes))
+if (.not. allocated(co2_ppm)) allocate(co2_ppm(nyr_co2))
+   if (.not. allocated(tmp))     allocate(tmp(nyr_sim, ntimes))
+   if (.not. allocated(pre))     allocate(pre(nyr_sim, ntimes))
+   if (.not. allocated(tswrf))   allocate(tswrf(nyr_sim, ntimes))
+   if (.not. allocated(dlwrf))   allocate(dlwrf(nyr_sim, ntimes))
+   if (.not. allocated(spfh))    allocate(spfh(nyr_sim, ntimes))
+   if (.not. allocated(pres))    allocate(pres(nyr_sim, ntimes))
+   if (.not. allocated(ugrd))    allocate(ugrd(nyr_sim, ntimes))
+   if (.not. allocated(vgrd))    allocate(vgrd(nyr_sim, ntimes))
 !----------------------------------------------------------------------!
 ! Read all CO2 and climate forcings.
 !----------------------------------------------------------------------!
 call READ_HYBRID15_CLR_FORCING
-!----------------------------------------------------------------------!
-write (*,*)
-write (*,'(a125)') 'kyr_ce    GPP_ann    Raut_ann    Rhet_ann&
-               &     NEE_ann       L_ann     biomass         SOM&
-               &     PPT_ann      RO_ann      ET_ann'
-write (*,'(a125)') '   CE   g[C]/m/yr   g[C]/m/yr   g[C]/m/yr&
-               &   g[C]/m/yr  g[DM]/m/yr    g[DM]/m2     g[C]/m2&
-               &     mm yr-1    mm yr-1      mm yr-1'
 !----------------------------------------------------------------------!
 do kl = 1, nlayers
 c_state (:,kl) = pool_initial (:,kl)

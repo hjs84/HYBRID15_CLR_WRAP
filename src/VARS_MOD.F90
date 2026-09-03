@@ -102,7 +102,7 @@ real, dimension (2) :: swc    ! Soil water relative to
 real, dimension (2) :: dz     ! Layer thickness (mm)
 real, dimension (2) :: theta  ! Volumetric soil water (mm/mm)
 real, dimension (2) :: dsm
-real, dimension (2) :: sm_day ! Mean daily soil moisture (mm)
+real(8), dimension (2) :: sm_day ! Mean daily soil moisture (mm)
 !----------------------------------------------------------------------!
 real :: D0
 real :: D_mol
@@ -171,17 +171,17 @@ real :: rac
 real :: rsc
 real :: aet
 real :: PPT_day
-real :: GPP_day
-real :: Raut_day
-real :: Rhet_day
+real(8) :: GPP_day
+real(8) :: Raut_day
+real(8) :: Rhet_day
 real :: GPP_ann
 real :: PPT_ann
 real :: RO_ann
 real :: ET_ann
 real :: l, rt, t, b
 real :: tmod
-real :: LE_day ! Mean daily latent heat flux (W/m2)
-real :: TC_day ! Mean daily temperature (oC)
+real(8) :: LE_day ! Mean daily latent heat flux (W/m2)
+real(8) :: TC_day ! Mean daily temperature (oC)
 real :: denom
 real :: wfps
 real :: wmod
@@ -207,7 +207,7 @@ real :: Rhet_ann ! g[C] m-2 yr-1
 real :: NEE_ann ! g[C] m-2 yr-1
 !!
 real :: NEE
-real :: NEE_day
+real(8) :: NEE_day
 real :: G_day
 integer :: its
 real :: TC_sum
@@ -227,7 +227,7 @@ real :: sum_temp_2
 real :: air_temp_fluctuation
 real, dimension(nz) :: T_new
 real, dimension(nz) :: T_profile
-real :: RECO_day
+real(8) :: RECO_day
 !!
 real, allocatable, dimension (:,:) :: tmp_global   ! K
 real, allocatable, dimension (:,:) :: pre_global   ! mm/6-hr

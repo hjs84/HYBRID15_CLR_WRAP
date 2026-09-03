@@ -21,32 +21,9 @@ contains
     real(8), intent(out), dimension(n_days) :: sm_out
 
     !f2py intent(in) :: params_in
-    !f2py intent(out) :: nee_out, gpp_out, reco_out, le_out, sm_out
+    !f2py intent(in) :: n_days
     !f2py integer intent(hide), depend(params_in) :: n_params = len(params_in)
-    !f2py integer intent(hide), depend(nee_out) :: n_days = len(nee_out)
-
-    !!!Map Python parameters here!!!
-    !wfps_threshold = params_in(1)
-    !T_ref          = params_in(2)
-    !Vcmax_top      = params_in(3)
-    !theta_sat      = params_in(4)
-    !q10            = params_in(5)
-    !dz(2)          = params_in(6)
-    !Topt_J         = params_in(7)
-    !moisture_dry_width = params_in(8)
-    !pool_initial(7,1)  = params_in(9)
-    !pool_initial(7,2)  = params_in(10)
-    !omega_J            = params_in(11)
-    !Kx                 = params_in(12)
-    !lwp_crit           = params_in(13)
-    !b_perc             = params_in(14)
-    !LAI                = params_in(15)
-    !pool_initial(3,1)  = params_in(16)
-    !pool_initial(3,2)  = params_in(17)
-    !asw                = params_in(18)
-    !perc_max           = params_in(19)
-    !dz(1)              = params_in(20)
-    !KPAR               = params_in(21)
+    !f2py intent(out), depend(n_days), dimension(n_days) :: nee_out, gpp_out, reco_out, le_out, sm_out
 
     integer :: day_idx
     day_idx = 0
@@ -140,7 +117,8 @@ contains
 
         Rhet_day = day_s * Rhet
         NEE_day = Raut_day + Rhet_day - GPP_day
-     
+
+        if (day_idx > n_days) exit     
         day_idx = day_idx + 1
         nee_out (day_idx)  = real (NEE_day, 8)
         gpp_out (day_idx)  = real (GPP_day, 8)
@@ -160,6 +138,16 @@ contains
 
     end do ! kyr
 
+  if (allocated(T_soil))  deallocate(T_soil)
+  if (allocated(co2_ppm)) deallocate(co2_ppm)
+  if (allocated(tmp))     deallocate(tmp)
+  if (allocated(pre))     deallocate(pre)
+  if (allocated(tswrf))   deallocate(tswrf)
+  if (allocated(dlwrf))   deallocate(dlwrf)
+  if (allocated(spfh))    deallocate(spfh)
+  if (allocated(pres))    deallocate(pres)
+  if (allocated(ugrd))    deallocate(ugrd)
+  if (allocated(vgrd))    deallocate(vgrd)
   end subroutine run_model
 
 end module HYBRID15_CLR

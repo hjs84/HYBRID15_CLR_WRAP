@@ -30,8 +30,3 @@ make clean FC="${FCOMP}"
 #make run FC="${FCOMP}"
 make test FC="${FCOMP}"
 
-echo ""
-echo "Compilation and HYBRID15_CLR model run completed successfully."
-echo "dt output file:     results/HYBRID15_CLR_dt_output.txt"
-echo "Daily output file:  results/HYBRID15_CLR_daily_output.txt"
-echo "Summary file:       results/HYBRID15_CLR_summary.txt"

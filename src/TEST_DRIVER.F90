@@ -6,7 +6,7 @@ program test_driver
   implicit none
 
   integer, parameter :: n_params = 21
-  integer, parameter :: n_days = 731
+  integer, parameter :: n_days = 730
   
   real(8), dimension(n_params) :: test_params
   real(8), dimension(n_days)   :: nee_out, gpp_out, reco_out, le_out, sm_out
@@ -51,13 +51,16 @@ program test_driver
   write(*,*) "Day 1 LE   :", le_out(1)
   write(*,*) "Day 1 SM   :", sm_out(1)
   
-  print *, "=== ARRAY INTEGRITY CHECK ==="
-  print *, "GPP  - Min:", minval(gpp_out),  " Max:", maxval(gpp_out),  " Mean:", sum(gpp_out)/n_days
-  print *, "NEE  - Min:", minval(nee_out),  " Max:", maxval(nee_out),  " Mean:", sum(nee_out)/n_days
-  print *, "RECO - Min:", minval(reco_out), " Max:", maxval(reco_out), " Mean:", sum(reco_out)/n_days
-  print *, "LE   - Min:", minval(le_out),   " Max:", maxval(le_out),   " Mean:", sum(le_out)/n_days
-  print *, "SM   - Min:", minval(sm_out),   " Max:", maxval(sm_out),   " Mean:", sum(sm_out)/n_days
+  write(*,*) "GPP  - Min:", minval(gpp_out),  " Max:", maxval(gpp_out),  " Mean:", sum(gpp_out)/n_days
+  write(*,*) "NEE  - Min:", minval(nee_out),  " Max:", maxval(nee_out),  " Mean:", sum(nee_out)/n_days
+  write(*,*) "RECO - Min:", minval(reco_out), " Max:", maxval(reco_out), " Mean:", sum(reco_out)/n_days
+  write(*,*) "LE   - Min:", minval(le_out),   " Max:", maxval(le_out),   " Mean:", sum(le_out)/n_days
+  write(*,*) "SM   - Min:", minval(sm_out),   " Max:", maxval(sm_out),   " Mean:", sum(sm_out)/n_days
 
-  write(*,*) "Mean Annual GPP :", sum(gpp_out) / real(n_days, 8)
+  write(*,*) "Day last GPP  :", gpp_out(730)
+  write(*,*) "Day last RECO :", reco_out(730)
+  write(*,*) "Day last NEE  :", nee_out(730)
+  write(*,*) "Day last LE   :", le_out(730)
+  write(*,*) "Day last SM   :", sm_out(730)
 
 end program test_driver
